@@ -17,3 +17,12 @@ plt.xticks(rotation=45)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+'''
+What do you notice about the initial infections?
+The initial infections increase over time. The rate of increase accelerates, so the virus is spreading faster and faster. The curve is exponential.
+How could we measure how quickly its spreading?
+We could measure the rate of increase in the number of active cases over time. This can be done by calculating the growth rate, which is the percentage increase in active cases from one day to the next.
+What information about the virus would be helpful in determining the shape of the outbreak curve?
+Information about the virus's transmission rate, incubation period, and recovery time would be helpful in determining the shape of the outbreak curve.
+'''
