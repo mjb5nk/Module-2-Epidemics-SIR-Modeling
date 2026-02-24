@@ -26,3 +26,31 @@ We could measure the rate of increase in the number of active cases over time. T
 What information about the virus would be helpful in determining the shape of the outbreak curve?
 Information about the virus's transmission rate, incubation period, and recovery time would be helpful in determining the shape of the outbreak curve.
 '''
+
+# day 2 plot
+#estimate R0 for mystery virus data using a fit to the exponential growth in I
+from scipy.optimize import curve_fit
+import numpy as np
+# Define the exponential growth function
+def exponential_growth(t, I0, r):
+    return I0 * np.exp(r * t)
+# Prepare the data for fitting
+data['days'] = (data['date'] - data['date'].min()).dt.days
+# Fit the exponential growth model to the data
+popt, pcov = curve_fit(exponential_growth, data['days'], data['active reported daily cases'], p0=(1, 0.1))
+I0, r = popt
+R0 = 1 + r * 2  # average infectious period of 2 days
+print(f"Estimated R0: {R0:.2f}")
+# Plot the data and the fitted curve
+plt.figure(figsize=(10, 6))
+plt.scatter(data['date'], data['active reported daily cases'], label='Data', color='blue')
+t_fit = np.linspace(0, data['days'].max(), 100)
+plt.plot(data['date'].min() + pd.to_timedelta(t_fit, unit='D'), exponential_growth(t_fit, *popt), label='Fitted Curve', color='red')
+plt.title('Daily Active Cases of the Mystery Virus with Exponential Fit')
+plt.xlabel('Date')
+plt.ylabel('Number of Active Cases')
+plt.xticks(rotation=45)
+plt.grid()
+plt.legend()
+plt.tight_layout()
+plt.show()
