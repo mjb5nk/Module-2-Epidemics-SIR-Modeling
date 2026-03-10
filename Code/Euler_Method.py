@@ -109,3 +109,28 @@ plt.legend()
 plt.grid()
 plt.show()
 
+# plot the full dataset (Data Release #3) against model
+data_release_3 = pd.read_csv("Data/mystery_virus_daily_active_counts_RELEASE#3.csv",
+                             parse_dates=['date'], header=0, index_col=None)
+observed_data_release_3 = data_release_3["active reported daily cases"].values
+timepoints_release_3 = np.arange(len(observed_data_release_3))
+
+# run the model out to day 120 so the blue line extends that far
+model_timepoints_120 = np.arange(120)
+# re‑use best parameters / initial conditions
+_, _, I_120, _ = euler_method(best_beta, best_sigma, best_gamma,
+                              S0, E0, I0, R0,
+                              model_timepoints_120, N)
+
+# plot model predictions against observed data from Data Release #3
+plt.figure(figsize=(10, 6))
+plt.plot(model_timepoints_120, I_120,
+         label='Model Infected (extended to day 120)')
+plt.scatter(timepoints_release_3, observed_data_release_3,
+            color='orange', label='Observed Infected (Release #3)')
+plt.title('SEIR Model vs Data Release #3')
+plt.xlabel('Time (days)')
+plt.ylabel('Number of Infected Individuals')
+plt.legend()
+plt.grid()
+plt.show()
