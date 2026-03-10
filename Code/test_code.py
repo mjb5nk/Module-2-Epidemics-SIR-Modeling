@@ -120,7 +120,7 @@ N = S0 + E0 + I0 + R0
 
 # Example parameters (will be fitted later)
 beta = 0.6
-sigma = 0.08
+sigma = 0.2
 gamma = 0.2
 
 # Solve the SEIR model
@@ -145,6 +145,24 @@ plt.figure(figsize=(10, 6))
 plt.plot(timepoints, observed_data, label='Observed Data', color='blue')
 plt.plot(timepoints, I, label='SEIR Model Fit', color='red')
 plt.title('SEIR Model Fit to VT Data')
+plt.xlabel('Time (days)')
+plt.ylabel('Number of Active Cases')
+plt.legend()
+plt.grid()
+plt.show()
+
+# Calculate intervention scenario (40% reduction in transmission)
+beta_intervention = beta * 0.6  # 40% reduction means 60% of original beta
+
+# Solve the SEIR model with intervention
+S_int, E_int, I_int, R_int = euler_method(beta_intervention, sigma, gamma, S0, E0, I0, R0, timepoints, N)
+
+# Plot comparison: observed data vs original model vs intervention model
+plt.figure(figsize=(12, 6))
+plt.plot(timepoints, observed_data, label='Observed Data', color='blue', linewidth=2)
+plt.plot(timepoints, I, label='SEIR Model (Original)', color='red', linewidth=2)
+plt.plot(timepoints, I_int, label='SEIR Model (40% Intervention)', color='green', linewidth=2)
+plt.title('SEIR Model: Original vs 40% Transmission Reduction Intervention')
 plt.xlabel('Time (days)')
 plt.ylabel('Number of Active Cases')
 plt.legend()
