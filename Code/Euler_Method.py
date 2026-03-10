@@ -7,7 +7,7 @@ data = pd.read_csv("Data/mystery_virus_daily_active_counts_RELEASE#2.csv", parse
 observed_data = data["active reported daily cases"].values
 num_days = len(observed_data)
 
-# Create matching timepoints (0, 1, 2, ..., num_days-1)
+# Create matching timepoints for the observed data
 timepoints = np.arange(num_days)
 
 # SEIR differential equations
@@ -43,46 +43,25 @@ def euler_method(beta, sigma, gamma, S0, E0, I0, R0, timepoints, N):
     # return results
     return S, E, I, R
 
-
+# Grid search for parameter estimation
 def grid_search_parameters(timepoints, N,
                            S0, E0, I0, R0,
                            observed_data,
                            beta_range=None,
                            sigma_range=None,
                            gamma_range=None):
-    """Perform a simple grid search over SEIR parameters.
-
-    Parameters
-    ----------
-    timepoints : array-like
-        Sequence of time values for the simulation.
-    N : float
-        Total population size.
-    S0, E0, I0, R0 : float
-        Initial compartment values.
-    observed_data : array-like
-        Measured infected counts to fit against.
-    beta_range, sigma_range, gamma_range : array-like, optional
-        Arrays of candidate values for each parameter.  If omitted,
-        defaults to `np.linspace(0.1, 1.0, 10)` for each.
-
-    Returns
-    -------
-    best_beta, best_sigma, best_gamma, best_sse
-        Parameter values that minimize the sum‑of‑squares error and
-        the corresponding SSE.
-    """
+    # Define default parameter ranges if not provided
     if beta_range is None:
         beta_range = np.linspace(0.1, 1.0, 10)
     if sigma_range is None:
         sigma_range = np.linspace(0.1, 1.0, 10)
     if gamma_range is None:
         gamma_range = np.linspace(0.1, 1.0, 10)
-
+    # Initialize array to store SSE values for each parameter combination
     sse_array = np.zeros((len(beta_range),
                           len(sigma_range),
                           len(gamma_range)))
-
+    # Loop through all combinations of parameters and compute SSE
     for b, beta in enumerate(beta_range):
         for s, sigma in enumerate(sigma_range):
             for g, gamma in enumerate(gamma_range):
@@ -90,36 +69,33 @@ def grid_search_parameters(timepoints, N,
                                           S0, E0, I0, R0,
                                           timepoints, N)
                 sse_array[b, s, g] = np.sum((I - observed_data) ** 2)
-
+    # Find the parameter combination with the lowest SSE
     min_index = np.unravel_index(np.argmin(sse_array), sse_array.shape)
     best_beta = beta_range[min_index[0]]
     best_sigma = sigma_range[min_index[1]]
     best_gamma = gamma_range[min_index[2]]
     best_sse = sse_array[min_index]
-
+    # return best parameters and SSE
     return best_beta, best_sigma, best_gamma, best_sse
 
 # Inputs / initial conditions
 S0 = 17900
 E0 = 0
 I0 = 1
-R0 = 1.24
+R0 = 1.24 # estimated from data
 N = S0 + E0 + I0 + R0
-
-# the `timepoints` and `observed_data` arrays were already
-# created above when the CSV was read from disk
 
 # perform grid search using the helper function
 best_beta, best_sigma, best_gamma, best_sse = grid_search_parameters(
     timepoints, N, S0, E0, I0, R0, observed_data
 )
-
+# Print best parameters and SSE
 print(f"Best parameters: beta={best_beta}, sigma={best_sigma}, "
       f"gamma={best_gamma}, SSE={best_sse}")
 
 # Plot best-fit model
 S, E, I, R = euler_method(best_beta, best_sigma, best_gamma, S0, E0, I0, R0, timepoints, N)
-
+# Plotting the results
 plt.figure(figsize=(10, 6))
 plt.plot(timepoints, S, label='Susceptible')
 plt.plot(timepoints, E, label='Exposed')
