@@ -142,7 +142,7 @@ plt.show()
 
 # Plot the VT data versus the originial SEIR model
 plt.figure(figsize=(10, 6))
-plt.plot(timepoints, observed_data, label='Observed Data', color='blue')
+plt.plot(timepoints, observed_data, label='Observed Data', linestyle='', marker='o')
 plt.plot(timepoints, I, label='SEIR Model Fit', color='red')
 plt.title('SEIR Model Fit to VT Data')
 plt.xlabel('Time (days)')
@@ -159,7 +159,7 @@ S_int, E_int, I_int, R_int = euler_method(beta_intervention, sigma, gamma, S0, E
 
 # Plot comparison: observed data vs original model vs intervention model
 plt.figure(figsize=(12, 6))
-plt.plot(timepoints, observed_data, label='Observed Data', color='blue', linewidth=2)
+plt.plot(timepoints, observed_data, label='Observed Data', linestyle='', marker='o')
 plt.plot(timepoints, I, label='SEIR Model (Original)', color='red', linewidth=2)
 plt.plot(timepoints, I_int, label='SEIR Model (40% Intervention)', color='green', linewidth=2)
 plt.title('SEIR Model: Original vs 40% Transmission Reduction Intervention')
