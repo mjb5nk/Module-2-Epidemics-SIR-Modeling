@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 # Load the data for RELEASE#2
-data = pd.read_csv("data/mystery_virus_daily_active_counts_RELEASE#2.csv", parse_dates=['date'], header=0, index_col=None)
+data = pd.read_csv("GitHub/module-2-mjb5nk/Module-2-Epidemics-SIR-Modeling/Data/mystery_virus_daily_active_counts_RELEASE#2.csv", parse_dates=['date'], header=0, index_col=None)
 observed_data = data["active reported daily cases"].values
 num_days = len(observed_data)
 timepoints = np.arange(num_days)
@@ -27,34 +27,45 @@ plt.ylabel('Number of Cases')
 plt.title('Prevalence of the Disease')
 plt.legend()
 plt.tight_layout()
+plt.savefig('GitHub/module-2-mjb5nk/Module-2-Epidemics-SIR-Modeling/Notebook examples/incidence_prevalence.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-# Do it a different way 
-
+# Find highest and lowest incidence
 pop = 17900
-base = "Data"   # adjust if your notebook is elsewhere
+incidence_pct = (incidence / pop) * 100
 
-def load_and_calc(fname):
-    df = pd.read_csv(f"{base}/{fname}")
-    df["prevalence_pct"] = df["active reported daily cases"] / pop * 100
-    # difference gives new cases; make first‑day equal to its count
-    df["new_cases"] = df["active reported daily cases"].diff().fillna(
-        df["active reported daily cases"]
-    )
-    df["incidence_pct"] = df["new_cases"] / pop * 100
-    return df
+max_incidence_idx = np.argmax(incidence_pct)
+min_incidence_idx = np.argmin(incidence_pct)
 
-df1 = load_and_calc("mystery_virus_daily_active_counts_RELEASE#1.csv")
-df2 = load_and_calc("mystery_virus_daily_active_counts_RELEASE#2.csv")
+max_incidence_day = data.iloc[max_incidence_idx]['date']
+max_incidence_pct = incidence_pct[max_incidence_idx]
 
-print("dataset #1")
-print(df1[["day","active reported daily cases",
-           "prevalence_pct","incidence_pct"]].head())
-print(df1[["day","active reported daily cases",
-           "prevalence_pct","incidence_pct"]].tail())
+min_incidence_day = data.iloc[min_incidence_idx]['date']
+min_incidence_pct = incidence_pct[min_incidence_idx]
 
-print("\ndataset #2")
-print(df2[["day","active reported daily cases",
-           "prevalence_pct","incidence_pct"]].head())
-print(df2[["day","active reported daily cases",
-           "prevalence_pct","incidence_pct"]].tail())
+print(f"\nHighest Incidence:")
+print(f"  Day: {max_incidence_day} (Day {max_incidence_idx + 1})")
+print(f"  Incidence: {max_incidence_pct:.4f}%")
+
+print(f"\nLowest Incidence:")
+print(f"  Day: {min_incidence_day} (Day {min_incidence_idx + 1})")
+print(f"  Incidence: {min_incidence_pct:.4f}%")
+# Find highest and lowest prevalence
+prevalence_pct = (prevalence / pop) * 100
+
+max_prevalence_idx = np.argmax(prevalence_pct)
+min_prevalence_idx = np.argmin(prevalence_pct)
+
+max_prevalence_day = data.iloc[max_prevalence_idx]['date']
+max_prevalence_pct = prevalence_pct[max_prevalence_idx]
+
+min_prevalence_day = data.iloc[min_prevalence_idx]['date']
+min_prevalence_pct = prevalence_pct[min_prevalence_idx]
+
+print(f"\nHighest Prevalence:")
+print(f"  Day: {max_prevalence_day} (Day {max_prevalence_idx + 1})")
+print(f"  Prevalence: {max_prevalence_pct:.4f}%")
+
+print(f"\nLowest Prevalence:")
+print(f"  Day: {min_prevalence_day} (Day {min_prevalence_idx + 1})")
+print(f"  Prevalence: {min_prevalence_pct:.4f}%")
