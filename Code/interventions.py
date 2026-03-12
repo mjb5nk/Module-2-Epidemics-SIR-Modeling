@@ -1,30 +1,3 @@
-'''
-Notes from slides
-• Each intervention will change some parameter (or move a population to a
-new compartment) at day 70
-• You will compare these changes to the baseline prediction for VT
-• As you model them from days 70-120, compare the following to no
-intervention:
-• Peak infections with intervention
-• Total cases (over days 70-120) prevented with intervention
-• Cost & feasibility
-• Compliance risk?
-• Which would you recommend to VT?
-'''
-
-# 1. masking mandates
-# Immediate masking mandate implemented from day 70 on, Reduces transmission by 40%
-
-
-# 2. and 3. vaccine interventions
-# 2. Vaccine campaign: single event on day 70, Vaccinate 2000 students on day 70 with 90% efficacy
-# 3. Vaccine rollout: Vaccinate 1000 students on each: day 70, day 80, day 90
-
-
-# 4. and 5. testing and quarantine interventions
-# 4. Testing + quarantine starting day 70, Reduces infectious period by 2 days (due to delays in testing & low compliance)
-# 5. Close school for 2 weeks, During closure, only 20% of normal contacts After closure, contact rate returns to normal
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
